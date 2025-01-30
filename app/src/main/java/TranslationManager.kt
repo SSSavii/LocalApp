@@ -1,3 +1,9 @@
+package ru.example.dictionary
+
+import android.content.Context
+import android.util.Log
+import java.io.IOException
+
 data class Translation(
     val pinyin: String,
     val meanings: List<String>

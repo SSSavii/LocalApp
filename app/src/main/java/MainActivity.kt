@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
 2. При удалении графемы происходит полный сброс состояния и последовательное восстановление оставшихся графем, что гарантирует правильный порядок и набор доступных графем.
 
 3. Последовательное добавление графем заново (`currentGraphemes.forEach`) обеспечивает корректное обновление состояния клавиатуры в соответствии с логикой сервера*/
-    private val apiService = RetrofitClient.apiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,3 +1,7 @@
+package ru.example.dictionary
+import android.content.Context
+import java.io.IOException
+import android.util.Log
 class LocalDataManager(private val context: Context) {
     private val hieroglyphsMap = mutableMapOf<String, List<String>>()
 

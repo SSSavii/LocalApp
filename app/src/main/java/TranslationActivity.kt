@@ -1,7 +1,6 @@
 package ru.example.dictionary
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -16,8 +15,6 @@ class TranslationActivity : AppCompatActivity() {
     private lateinit var backButton: Button
     private lateinit var translationManager: TranslationManager
 
-    private val apiService = RetrofitClient.apiService
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_translation)
@@ -30,7 +27,6 @@ class TranslationActivity : AppCompatActivity() {
         characterTextView.text = character
         loadTranslation(character)
     }
-
 
     private fun initializeViews() {
         characterTextView = findViewById(R.id.characterTextView)
@@ -50,7 +46,7 @@ class TranslationActivity : AppCompatActivity() {
 
         if (translation != null) {
             pinyinTextView.text = translation.pinyin
-            meaningsTextView.text = translation.meanings.joinToString("\n") { "• $it" }
+            meaningsTextView.text = translation.meanings.joinToString("\n") { meaning -> "• $meaning" }
         } else {
             displayError("Перевод не найден")
         }
@@ -61,15 +57,16 @@ class TranslationActivity : AppCompatActivity() {
             if (tokens.isNotEmpty()) {
                 val token = tokens[0]
                 pinyinTextView.text = token.pinyin
-                meaningsTextView.text = token.meanings.joinToString("\n") { "• $it" }
+                meaningsTextView.text = token.meanings.joinToString("\n") { meaning -> "• $meaning" }
             }
         }
     }
+
     private fun displaySingleToken(response: TranslationResponse) {
         runOnUiThread {
             pinyinTextView.text = response.pinyin ?: ""
             response.meanings?.let { meanings ->
-                meaningsTextView.text = meanings.joinToString("\n") { "• $it" }
+                meaningsTextView.text = meanings.joinToString("\n") { meaning -> "• $meaning" }
             } ?: run {
                 meaningsTextView.text = ""
             }
