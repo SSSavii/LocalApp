@@ -27,24 +27,42 @@ class LocalDataManager(private val context: Context) {
             return getAllInitialGraphemes()
         }
 
-        val availableGraphemes = mutableSetOf<String>()
+        val availableGraphemes = mutableListOf<String>()
 
         hieroglyphsMap.forEach { (_, parts) ->
-            if (selectedGraphemes.all { it in parts }) {
-                parts.forEach { part ->
-                    if (part !in selectedGraphemes) {
-                        availableGraphemes.add(part)
-                    }
+            // Создаем копии списков для подсчета
+            val remainingParts = parts.toMutableList()
+            val selectedGraphemesCopy = selectedGraphemes.toMutableList()
+
+            // Проверяем, содержатся ли все выбранные графемы в текущем иероглифе
+            var allFound = true
+            for (selected in selectedGraphemes) {
+                val index = remainingParts.indexOf(selected)
+                if (index != -1) {
+                    remainingParts.removeAt(index)
+                    selectedGraphemesCopy.remove(selected)
+                } else {
+                    allFound = false
+                    break
+                }
+            }
+
+            // Если все выбранные графемы найдены
+            if (allFound) {
+                // Добавляем оставшиеся части, включая повторяющиеся
+                remainingParts.forEach { part ->
+                    availableGraphemes.add(part)
                 }
             }
         }
 
-        return availableGraphemes.toList()
+        return availableGraphemes
     }
 
     fun getHieroglyph(graphemes: List<String>): String? {
         return hieroglyphsMap.entries.find { (_, parts) ->
-            parts.size == graphemes.size && parts.toSet() == graphemes.toSet()
+            parts.size == graphemes.size &&
+                    parts.groupBy { it } == graphemes.groupBy { it }
         }?.key?.let { unicode ->
             String(Character.toChars(unicode.toInt(16)))
         }

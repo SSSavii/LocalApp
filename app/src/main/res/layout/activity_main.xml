@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,6 +8,7 @@
     android:padding="16dp">
 
     <!-- Графемная строка с кнопкой подтверждения -->
+    <!-- Изменим LinearLayout с кнопками -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +30,14 @@
                 android:minHeight="50dp"
                 android:gravity="center_vertical"/>
         </HorizontalScrollView>
+
+        <ImageButton
+            android:id="@+id/clearGraphemesButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_clear"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
         <ImageButton
             android:id="@+id/confirmGraphemesButton"

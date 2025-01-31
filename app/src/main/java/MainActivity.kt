@@ -12,9 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.core.content.res.ResourcesCompat
-import kotlinx.coroutines.launch
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private val selectedGraphemes = mutableListOf<String>()
     private var isDeleting = false
     private lateinit var localDataManager: LocalDataManager
+    private lateinit var clearGraphemesButton: ImageButton
 
 
     /*
@@ -51,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         characterInput = findViewById(R.id.characterInput)
         confirmGraphemesButton = findViewById(R.id.confirmGraphemesButton)
         translateButton = findViewById(R.id.translateButton)
+        clearGraphemesButton = findViewById(R.id.clearGraphemesButton)
     }
 
     private fun setupListeners() {
@@ -63,7 +63,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Обработчик для кнопки подтверждения графем
+        // Обработчик для кнопки очистки
+        clearGraphemesButton.setOnClickListener {
+            selectedGraphemes.clear()
+            updateSelectedGraphemesView()
+            createImageButtons()
+        }
+
+        // Измененный обработчик для кнопки подтверждения
         confirmGraphemesButton.setOnClickListener {
             if (selectedGraphemes.isNotEmpty()) {
                 checkHieroglyphExists()
@@ -72,8 +79,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
     private fun startTranslationActivity(character: String) {
         val intent = Intent(this, TranslationActivity::class.java)
         intent.putExtra("character", character)
@@ -214,7 +219,15 @@ class MainActivity : AppCompatActivity() {
         val hieroglyph = localDataManager.getHieroglyph(selectedGraphemes)
 
         if (hieroglyph != null) {
-            characterInput.setText(hieroglyph)
+            // Добавляем новый иероглиф через пробел
+            val currentText = characterInput.text.toString()
+            val newText = if (currentText.isEmpty()) {
+                hieroglyph
+            } else {
+                "$currentText $hieroglyph"
+            }
+            characterInput.setText(newText)
+
             Toast.makeText(
                 this@MainActivity,
                 "Иероглиф найден: $hieroglyph",
