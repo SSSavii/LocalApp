@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private var isDeleting = false
     private lateinit var localDataManager: LocalDataManager
     private lateinit var clearGraphemesButton: ImageButton
+    private lateinit var fileManager: FileManager
+    private lateinit var exitButton: Button
+    private lateinit var translationManager: TranslationManager
 
 
     /*
@@ -38,7 +41,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        localDataManager = LocalDataManager(this)
+        fileManager = FileManager(this)
+        fileManager.initializeData()
+
+        val dataPath = fileManager.getFolderPath() // Получаем путь к LocalAppData
+
+        localDataManager = LocalDataManager(dataPath)
+        translationManager = TranslationManager(dataPath)
+
         initializeViews()
         setupListeners()
         createImageButtons()
@@ -51,9 +61,13 @@ class MainActivity : AppCompatActivity() {
         confirmGraphemesButton = findViewById(R.id.confirmGraphemesButton)
         translateButton = findViewById(R.id.translateButton)
         clearGraphemesButton = findViewById(R.id.clearGraphemesButton)
+        exitButton = findViewById(R.id.exitButton)
     }
 
     private fun setupListeners() {
+        exitButton.setOnClickListener {
+            finishAffinity() // Завершает все активности
+        }
         translateButton.setOnClickListener {
             val character = characterInput.text.toString()
             if (character.isNotEmpty()) {
@@ -82,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     private fun startTranslationActivity(character: String) {
         val intent = Intent(this, TranslationActivity::class.java)
         intent.putExtra("character", character)
+        intent.putExtra("dataPath", fileManager.getFolderPath()) // Передаем путь
         startActivity(intent)
     }
 

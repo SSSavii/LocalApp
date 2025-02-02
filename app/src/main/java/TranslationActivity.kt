@@ -18,7 +18,13 @@ class TranslationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_translation)
 
-        translationManager = TranslationManager(this)
+        val dataPath = intent.getStringExtra("dataPath") ?: run {
+            Log.e("TranslationActivity", "Data path not found")
+            finish()
+            return
+        }
+
+        translationManager = TranslationManager(dataPath) // Передаём путь, а не this
         initializeViews()
         setupListeners()
 

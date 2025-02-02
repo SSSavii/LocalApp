@@ -1,15 +1,15 @@
 package ru.example.dictionary
 
-import android.content.Context
 import android.util.Log
 import org.json.JSONArray
+import java.io.File
 
 data class Translation(
     val pinyin: String,
     val meanings: List<String>
 )
 
-class TranslationManager(private val context: Context) {
+class TranslationManager(private val dataPath: String) {
     private val translations = mutableMapOf<String, Translation>()
 
     init {
@@ -18,7 +18,9 @@ class TranslationManager(private val context: Context) {
 
     private fun loadTranslations() {
         try {
-            val jsonString = context.assets.open("dictionary.json").bufferedReader().use { it.readText() }
+            // Читаем файл dictionary.json из папки LocalAppData
+            val file = File(dataPath, "dictionary.json")
+            val jsonString = file.readText()
             val jsonArray = JSONArray(jsonString)
 
             for (i in 0 until jsonArray.length()) {
@@ -38,26 +40,16 @@ class TranslationManager(private val context: Context) {
                     }
 
                     translations[character] = Translation(pinyin, meanings)
-
-                    Log.d("TranslationManager", "Loaded translation for: $character")
                 }
             }
-
-            Log.d("TranslationManager", "Total translations loaded: ${translations.size}")
         } catch (e: Exception) {
             Log.e("TranslationManager", "Error loading translations", e)
-            e.printStackTrace()
         }
     }
 
     fun getTranslations(text: String): List<Translation?> {
-        Log.d("TranslationManager", "Searching translations for: '$text'")
-
-        // Разбиваем входной текст на отдельные иероглифы
         return text.split(" ").map { character ->
-            translations[character].also { result ->
-                Log.d("TranslationManager", "Translation for '$character' found: ${result != null}")
-            }
+            translations[character]
         }
     }
 }
